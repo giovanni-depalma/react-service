@@ -1,0 +1,36 @@
+
+server {
+  listen 80;
+  listen [::]:80;
+  root /usr/share/nginx/html;
+  absolute_redirect off;
+
+  # matches any query beginning with /static/ and halts searching,
+  # so regular expressions will not be checked.
+  # ^~ (forward match)
+  location ^~ /static {
+    try_files $uri = 404;
+    expires 1y;
+    add_header Cache-Control "public, immutable";
+  }
+
+  # Any route containing a file extension (e.g. /devicesfile.js)
+  # ~ (regular expression case sensitive)
+  location ~ ^.+\..+$ {
+    try_files $uri = 404;
+    add_header Pragma "no-cache";
+    add_header Cache-Control "no-cache, no-store, max-age=0, must-revalidate";
+  }
+
+
+  location / {
+    try_files $uri /index.html;
+    expires -1y;
+    add_header Pragma "no-cache";
+    add_header Cache-Control "no-cache, no-store, max-age=0, must-revalidate";
+  }
+
+  
+
+}
+
